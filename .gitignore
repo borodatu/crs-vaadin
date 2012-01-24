@@ -5,4 +5,5 @@ build
 *.iml
 
 /web/gradle.properties
-
+/web/src/main/webapp/VAADIN/gwt-unitCache/
+/web/src/main/webapp/VAADIN/widgetsets/
