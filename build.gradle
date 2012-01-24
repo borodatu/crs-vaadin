@@ -1,0 +1,86 @@
+dependsOnChildren()
+
+allprojects {
+    apply plugin: 'eclipse-wtp'
+
+    group = 'com.copyright'
+    version = '0.0.1-SNAPSHOT'
+    repositories {
+        mavenCentral()
+        mavenRepo url: 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath
+    }
+}
+
+libraries = [
+        vaadin: 'com.vaadin:vaadin:6.7.0',
+        popupbutton: 'org.vaadin.addons:popupbutton:1.2.1',
+        gwtUser: 'com.google.gwt:gwt-user:2.4.0',
+        gwtDev: 'com.google.gwt:gwt-dev:2.4.0'
+]
+
+subprojects {
+    apply plugin: 'java'
+
+    //Tasks that will be executed while 'gradle' is called without params.
+    defaultTasks 'clean', 'pmd', 'build'
+
+    sharedManifest = manifest {
+        attributes 'Implementation-Title': 'CRSApplication'
+        attributes 'Implementation-Version': version
+        attributes 'Implementation-Vendor': 'Vaadin Ltd'
+        attributes 'Vaadin-Package-Version': '1'
+        attributes 'Vaadin-License-Title': 'Apache License 2.0'
+        attributes 'Vaadin-Widgetsets': 'com.copyright.vaadin.widgetset.CRSApplicationWidgetSet'
+    }
+
+    configurations {
+        pmdConf
+        provided
+        vaadinDependency
+        compileWidgetset
+    }
+
+    repositories {
+        mavenCentral()
+        mavenRepo(urls: 'http://maven.vaadin.com/vaadin-addons')
+    }
+
+    dependencies {
+        pmdConf group: 'pmd', name: 'pmd', version: '4.2.5'
+        compile(libraries.vaadin)
+        vaadinDependency(libraries.popupbutton)
+        provided(libraries.gwtDev)
+        provided(libraries.gwtUser)
+        //compile 'com.google.gwt:gwt-user:2.3.0', 'com.google.gwt:gwt-dev:2.3.0', 'com.google.gwt.inject:gin:1.5.0'
+    }
+
+    task pmd (dependsOn: compileJava) << {
+        println 'Running PMD static code analysis'
+        ant {
+            if (!buildDir.isDirectory()) {
+                buildDir.mkdirs()
+            }
+            taskdef(name: 'pmd', classname: 'net.sourceforge.pmd.ant.PMDTask', classpath: configurations.pmdConf.asPath)
+            taskdef(name: 'cpd', classname: 'net.sourceforge.pmd.cpd.CPDTask', classpath: configurations.pmdConf.asPath)
+
+            pmd(shortFilenames: 'true',
+                    failonruleviolation: 'false',//TODO set to true after resolving pmd issues
+                    rulesetfiles: 'rulesets/basic.xml, rulesets/braces.xml, rulesets/clone.xml, rulesets/coupling.xml, rulesets/codesize.xml, rulesets/design.xml, rulesets/migrating.xml, rulesets/naming.xml, rulesets/strictexception.xml, rulesets/strings.xml, rulesets/unusedcode.xml') {
+                formatter(type: 'xml', toFile: 'build/pmd.xml')
+                fileset(dir: "src/main/java") {
+                    include(name: '**/*.java')
+                }
+                fileset(dir: "src/test/java") {
+                    include(name: '**/*.java')
+                }
+            }
+            cpd(minimumTokenCount: '50', format: 'xml',
+                    ignoreIdentifiers: 'true',
+                    outputFile: 'build/cpd.xml') {
+                fileset(dir: "src/main/java") {
+                    include(name: '**/*.java')
+                }
+            }
+        }
+    }
+}

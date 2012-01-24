@@ -1,0 +1,3 @@
+rootProject.name = 'crs-vaadin'
+
+include 'api', 'domain', 'service', 'web'

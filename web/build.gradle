@@ -1,0 +1,107 @@
+apply plugin: 'war'
+apply plugin: 'jetty'
+apply plugin: 'maven'
+
+archivesBaseName = 'web-vaadin'
+
+dependencies {
+    compile project(':api'), project(':domain'), project(':service')
+
+    compile group: "org.springframework", name: "spring-core", version: "3.1.0.RELEASE"
+    compile group: "org.springframework", name: "spring-beans", version: "3.1.0.RELEASE"
+    compile group: "org.springframework", name: "spring-context", version: "3.1.0.RELEASE"
+    compile group: "org.springframework", name: "spring-web", version: "3.1.0.RELEASE"
+    compile group: "org.springframework", name: "spring-webmvc", version: "3.1.0.RELEASE"
+    compile group: "org.springframework", name: "spring-webmvc-portlet", version: "3.1.0.RELEASE"
+    compile group: "org.freemarker", name: "freemarker", version: "2.3.14"
+    compile 'net.sf.json-lib:json-lib-ext-spring:1.0.2'
+    compile 'log4j:log4j:1.2.16'
+    compile 'commons-lang:commons-lang:2.3'
+    compile ('org.glassfish.web:jstl-impl:1.2') {
+        exclude module: 'jsp-api'
+    }
+    //Jackson JSON Mapper
+    compile group: "org.codehaus.jackson", name: "jackson-mapper-asl", version: "1.7.1"
+    providedCompile group: 'javax.portlet', name: 'portlet-api', version: '2.0'
+    providedCompile group: 'com.liferay.portal', name: 'portal-service', version: '6.0.2'
+}
+
+task generatePom {
+    pom = pom()
+    pom.artifactId = archivesBaseName
+    pom.whenConfigured { pom ->
+        // Remove vaadin, junit and mockito from the dependency list in the pom
+        pom.dependencies.remove(pom.dependencies.find {dep -> dep.artifactId == 'vaadin'})
+        pom.dependencies.remove(pom.dependencies.find {dep -> dep.artifactId == 'junit'})
+        pom.dependencies.remove(pom.dependencies.find {dep -> dep.artifactId == 'mockito-core'})
+    }
+
+    pomFile = "$buildDir/generatedPoms/pom.xml" as File
+    doFirst {
+        pom.writeTo(pomFile)
+    }
+}
+
+sourceSets {
+    main { compileClasspath += configurations.provided }
+}
+
+jar {
+    dependsOn generatePom
+    // Include sources to jar
+    from sourceSets.main.allJava
+    manifest = project.manifest {
+        from sharedManifest
+    }
+    metaInf {
+        from "$buildDir/generatedPoms/pom.xml"
+        into "maven/${project.group}/$archivesBaseName"
+    }
+}
+
+task createZip(type: Zip) {
+    from jar.outputs.files
+    from configurations.vaadinDependency
+    into('META-INF') {
+        from "$buildDir/tmp/zip/MANIFEST.MF"
+    }
+
+    manifest = project.manifest {
+        attributes 'Vaadin-Addon': jar.outputs.files.collect { File file -> file.name }.join(' ')
+        attributes 'Vaadin-Dependency': configurations.vaadinDependency.collect { File file -> file.name }.join(' ')
+        from sharedManifest
+    }
+    manifest.writeTo("$buildDir/tmp/zip/MANIFEST.MF")
+}
+
+task compileWidgetset(dependsOn: build) << {
+    ant.java(classname:'com.google.gwt.dev.Compiler', failOnError: 'true', fork: 'true')
+            {
+                jvmarg(value: '-Xss1024k')
+                arg(line: '-logLevel INFO')
+                arg(line: '-war src/main/webapp/VAADIN/widgetsets')
+                arg(value: 'com.copyright.vaadin.widgetset.CRSApplicationWidgetSet')
+                classpath {
+                    pathElement(location: 'src/main/resources')
+                    pathElement(path: configurations.compile.asPath)
+                    pathElement(path: configurations.compileWidgetset.asPath)
+                    pathElement(path: configurations.provided.asPath)
+                }
+            }
+}
+
+task buildWar(dependsOn: compileWidgetset) << {
+    war {
+        dependsOn compileWidgetset
+        archiveName = archivesBaseName + '.war'
+    }
+}
+
+task deploylocal(dependsOn: buildWar) << {
+    println "Copy from ${libsDir.getPath()} into ${liferayDeploy}"
+    copy {
+        from libsDir
+        into "${liferayDeploy}"
+        include '*.war'
+    }
+}
