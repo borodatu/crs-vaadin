@@ -46,41 +46,13 @@ sourceSets {
     main { compileClasspath += configurations.provided }
 }
 
-jar {
-    dependsOn generatePom
-    // Include sources to jar
-    from sourceSets.main.allJava
-    manifest = project.manifest {
-        from sharedManifest
-    }
-    metaInf {
-        from "$buildDir/generatedPoms/pom.xml"
-        into "maven/${project.group}/$archivesBaseName"
-    }
-}
-
-task createZip(type: Zip) {
-    from jar.outputs.files
-    from configurations.vaadinDependency
-    into('META-INF') {
-        from "$buildDir/tmp/zip/MANIFEST.MF"
-    }
-
-    manifest = project.manifest {
-        attributes 'Vaadin-Addon': jar.outputs.files.collect { File file -> file.name }.join(' ')
-        attributes 'Vaadin-Dependency': configurations.vaadinDependency.collect { File file -> file.name }.join(' ')
-        from sharedManifest
-    }
-    manifest.writeTo("$buildDir/tmp/zip/MANIFEST.MF")
-}
-
 task compileWidgetset(dependsOn: build) << {
     ant.java(classname:'com.google.gwt.dev.Compiler', failOnError: 'true', fork: 'true')
             {
                 jvmarg(value: '-Xss1024k')
                 arg(line: '-logLevel INFO')
                 arg(line: '-war src/main/webapp/VAADIN/widgetsets')
-                arg(value: 'com.copyright.vaadin.widgetset.CRSApplicationWidgetSet')
+                arg(value: 'com.copyright.vaadin.widgetset.MainViewApplicationWidgetSet')
                 classpath {
                     pathElement(location: 'src/main/resources')
                     pathElement(path: configurations.compile.asPath)

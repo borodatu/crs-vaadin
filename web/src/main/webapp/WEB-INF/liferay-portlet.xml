@@ -5,9 +5,17 @@
 <liferay-portlet-app>
 
     <portlet>
-        <portlet-name>crs-vaadin-portlet</portlet-name>
+        <portlet-name>main-view-vaadin-portlet</portlet-name>
         <instanceable>true</instanceable>
         <ajaxable>false</ajaxable>
+        <!--<private-session-attributes>false</private-session-attributes>-->
+    </portlet>
+
+    <portlet>
+        <portlet-name>main-menu-vaadin-portlet</portlet-name>
+        <instanceable>true</instanceable>
+        <ajaxable>false</ajaxable>
+        <!--<private-session-attributes>false</private-session-attributes>-->
     </portlet>
 
 </liferay-portlet-app>

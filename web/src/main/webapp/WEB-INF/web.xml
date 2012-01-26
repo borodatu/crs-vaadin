@@ -16,26 +16,45 @@
     </context-param>-->
 
     <servlet>
-        <servlet-name>crs-vaadin-portlet-application</servlet-name>
+        <servlet-name>main-view-vaadin-portlet-application</servlet-name>
         <servlet-class>com.vaadin.terminal.gwt.server.ApplicationServlet</servlet-class>
         <init-param>
             <description>Vaadin application class to start</description>
             <param-name>application</param-name>
-            <param-value>com.copyright.vaadin.CRSApplication</param-value>
+            <param-value>com.copyright.vaadin.MainViewApplication</param-value>
         </init-param>
         <init-param>
             <description>Application widgetset</description>
             <param-name>widgetset</param-name>
-            <param-value>com.copyright.vaadin.widgetset.CRSApplicationWidgetSet</param-value>
+            <param-value>com.copyright.vaadin.widgetset.MainViewApplicationWidgetSet</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
+
+    <servlet>
+        <servlet-name>main-menu-portlet-application</servlet-name>
+        <servlet-class>com.vaadin.terminal.gwt.server.ApplicationServlet</servlet-class>
+        <init-param>
+            <description>Vaadin application class to start</description>
+            <param-name>application</param-name>
+            <param-value>com.copyright.vaadin.MainMenuApplication</param-value>
+        </init-param>
+        <init-param>
+            <description>Application widgetset</description>
+            <param-name>widgetset</param-name>
+            <param-value>com.copyright.vaadin.widgetset.MainViewApplicationWidgetSet</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
     <servlet-mapping>
-        <servlet-name>crs-vaadin-portlet-application</servlet-name>
+        <servlet-name>main-view-vaadin-portlet-application</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
-    <!--<servlet-mapping>
-        <servlet-name>crs-vaadin-portlet-application</servlet-name>
-        <url-pattern>/VAADIN/*</url-pattern>
-    </servlet-mapping>-->
+
+    <servlet-mapping>
+        <servlet-name>main-menu-portlet-application</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+
 </web-app>

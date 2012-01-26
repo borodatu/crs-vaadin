@@ -1,8 +1,9 @@
 <?xml version="1.0"?>
 <display>
 
-    <category name="category.poc">
-        <portlet id="crs-vaadin-portlet"/>
+    <category name="category.crs">
+        <portlet id="main-view-vaadin-portlet"/>
+        <portlet id="main-menu-vaadin-portlet"/>
     </category>
 
 </display>

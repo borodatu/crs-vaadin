@@ -12,8 +12,8 @@ allprojects {
 }
 
 libraries = [
-        vaadin: 'com.vaadin:vaadin:6.7.0',
-        popupbutton: 'org.vaadin.addons:popupbutton:1.2.1',
+        vaadin: 'com.vaadin:vaadin:6.7.4',
+        vaadinIpc: 'org.vaadin.addons:vaadin-ipc-for-liferay:1.0.0',
         gwtUser: 'com.google.gwt:gwt-user:2.4.0',
         gwtDev: 'com.google.gwt:gwt-dev:2.4.0'
 ]
@@ -23,15 +23,6 @@ subprojects {
 
     //Tasks that will be executed while 'gradle' is called without params.
     defaultTasks 'clean', 'pmd', 'build'
-
-    sharedManifest = manifest {
-        attributes 'Implementation-Title': 'CRSApplication'
-        attributes 'Implementation-Version': version
-        attributes 'Implementation-Vendor': 'Vaadin Ltd'
-        attributes 'Vaadin-Package-Version': '1'
-        attributes 'Vaadin-License-Title': 'Apache License 2.0'
-        attributes 'Vaadin-Widgetsets': 'com.copyright.vaadin.widgetset.CRSApplicationWidgetSet'
-    }
 
     configurations {
         pmdConf
@@ -43,15 +34,16 @@ subprojects {
     repositories {
         mavenCentral()
         mavenRepo(urls: 'http://maven.vaadin.com/vaadin-addons')
+        mavenRepo(urls: 'https://www.escidoc.org/artifactory/repo/org/vaadin/addons')
     }
 
     dependencies {
         pmdConf group: 'pmd', name: 'pmd', version: '4.2.5'
         compile(libraries.vaadin)
-        vaadinDependency(libraries.popupbutton)
+        compile(libraries.vaadinIpc)
+        vaadinDependency(libraries.vaadinIpc)
         provided(libraries.gwtDev)
         provided(libraries.gwtUser)
-        //compile 'com.google.gwt:gwt-user:2.3.0', 'com.google.gwt:gwt-dev:2.3.0', 'com.google.gwt.inject:gin:1.5.0'
     }
 
     task pmd (dependsOn: compileJava) << {

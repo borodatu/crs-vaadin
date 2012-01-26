@@ -4,7 +4,7 @@ import com.vaadin.Application;
 import com.vaadin.ui.Window;
 
 /**
- * The Class CRSApplication.
+ * The Class MainViewApplication.
  * <p/>
  * Copyright (C) 2012
  * <p/>
@@ -12,12 +12,13 @@ import com.vaadin.ui.Window;
  *
  * @author Siarhei_Usau
  */
-public class CRSApplication extends Application {
+public class MainViewApplication extends Application {
 
     @Override
     public void init() {
         Window mainWindow = new Window();
-        mainWindow.setContent(new LoginWidget());
+        //mainWindow.setContent(new LoginWidget());
+        mainWindow.setContent(new MainViewWidget());
         setMainWindow(mainWindow);
     }
 }
