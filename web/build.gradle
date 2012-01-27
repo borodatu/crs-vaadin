@@ -4,6 +4,8 @@ apply plugin: 'maven'
 
 archivesBaseName = 'web-vaadin'
 
+env = System.getenv()
+
 dependencies {
     compile project(':api'), project(':domain'), project(':service')
 
@@ -70,10 +72,16 @@ task buildWar(dependsOn: compileWidgetset) << {
 }
 
 task deploylocal(dependsOn: buildWar) << {
-    println "Copy from ${libsDir.getPath()} into ${liferayDeploy}"
-    copy {
-        from libsDir
-        into "${liferayDeploy}"
-        include '*.war'
+    env = System.getenv()
+    if (env['LIFERAY_HOTDEPLOY_DIR'] != null) {
+        liferayDeploy = env['LIFERAY_HOTDEPLOY_DIR']
+        println "Copy from ${libsDir.getPath()} into ${liferayDeploy}"
+        copy {
+            from libsDir
+            into "${liferayDeploy}"
+            include '*.war'
+        }
+    } else {
+        throw new GradleException("Environment property LIFERAY_HOTDEPLOY_DIR should be set")
     }
 }
