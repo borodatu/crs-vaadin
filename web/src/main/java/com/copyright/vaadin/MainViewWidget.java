@@ -26,7 +26,8 @@ public class MainViewWidget extends VerticalLayout {
         work = new Embedded();
         work.setMimeType("application/pdf");
         work.setType(Embedded.TYPE_BROWSER);
-        work.setSizeFull();
+        work.setWidth("100%");
+        work.setHeight("500px");
         work.setImmediate(true);
         work.setReadOnly(true);
 

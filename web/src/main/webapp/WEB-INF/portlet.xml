@@ -24,6 +24,10 @@
             <value>com.vaadin.portal.gwt.PortalDefaultWidgetSet</value>
         </init-param>
 
+        <init-param>
+            <name>style</name>
+            <value>height:100%; width:100%</value>
+        </init-param>
 
         <!-- Supported portlet modes and content types. -->
         <supports>
@@ -38,6 +42,13 @@
             <title>Vaading Works Viewer</title>
             <short-title>Vaading Works Viewer</short-title>
         </portlet-info>
+
+        <portlet-preferences>
+            <preference>
+                <name>portlet-setup-show-borders</name>
+                <value>false</value>
+            </preference>
+        </portlet-preferences>
     </portlet>
 
     <portlet>
@@ -61,7 +72,6 @@
             <value>com.vaadin.portal.gwt.PortalDefaultWidgetSet</value>
         </init-param>
 
-
         <!-- Supported portlet modes and content types. -->
         <supports>
             <mime-type>text/html</mime-type>
@@ -75,5 +85,12 @@
             <title>Vaading PDF Menu</title>
             <short-title>Vaading PDF Menu</short-title>
         </portlet-info>
+
+        <portlet-preferences>
+            <preference>
+                <name>portlet-setup-show-borders</name>
+                <value>false</value>
+            </preference>
+        </portlet-preferences>
     </portlet>
 </portlet-app>
