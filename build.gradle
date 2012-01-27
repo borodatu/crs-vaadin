@@ -33,8 +33,8 @@ subprojects {
 
     repositories {
         mavenCentral()
-        mavenRepo(urls: 'http://maven.vaadin.com/vaadin-addons')
-        mavenRepo(urls: 'https://www.escidoc.org/artifactory/repo/org/vaadin/addons')
+        mavenRepo(url: 'http://maven.vaadin.com/vaadin-addons')
+        mavenRepo(url: 'https://www.escidoc.org/artifactory/repo/org/vaadin/addons')
     }
 
     dependencies {
